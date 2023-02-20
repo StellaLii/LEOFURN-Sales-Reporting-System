@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/MenuFragment">
+
+    <fragment
+        android:id="@+id/MenuFragment"
+        android:name="edu.gatech.jobcomparison.fragment.MenuFragment"
+        android:label="@string/menu_fragment_label"
+        tools:layout="@layout/fragment_menu">
+
+        <action
+            android:id="@+id/action_MenuFragment_to_ManageJobFragment"
+            app:destination="@id/EditManageJobFragment" />
+        <action
+            android:id="@+id/action_MenuFragment_to_availableJobsFragment2"
+            app:destination="@id/availableJobsFragment" />
+        <action
+            android:id="@+id/action_MenuFragment_to_addUpdateWeightFragment"
+            app:destination="@id/addUpdateWeightFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/EditManageJobFragment"
+        android:name="edu.gatech.jobcomparison.fragment.AddJobFragment"
+        android:label="@string/job_txt"
+        tools:layout="@layout/fragment_add_job">
+        <action
+            android:id="@+id/action_EditManageJobFragment_to_packageFragment"
+            app:destination="@id/packageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/packageFragment"
+        android:name="edu.gatech.jobcomparison.fragment.AddPackageFragment"
+        android:label="@string/package_txt" >
+        <action
+            android:id="@+id/action_packageFragment_to_MenuFragment"
+            app:destination="@id/MenuFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+    <fragment
+        android:id="@+id/availableJobsFragment"
+        android:name="edu.gatech.jobcomparison.fragment.AvailableJobsFragment"
+        android:label="Compare Jobs" >
+        <action
+            android:id="@+id/action_availableJobsFragment_to_comparisonFragment"
+            app:destination="@id/comparisonFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/comparisonFragment"
+        android:name="edu.gatech.jobcomparison.fragment.CompareSelectedJobsFragment"
+        android:label="Compare Jobs" />
+    <fragment
+        android:id="@+id/addUpdateWeightFragment"
+        android:name="edu.gatech.jobcomparison.fragment.AddUpdateWeightFragment"
+        android:label="Weight Menu" />
+</navigation>

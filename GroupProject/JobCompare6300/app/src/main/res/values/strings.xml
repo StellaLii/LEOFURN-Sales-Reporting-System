@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">Job Comparison</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="edit_manage_txt">"Edit/Manage package "</string>
+    <string name="compare_jobs_txt">Compare Jobs</string>
+    <string name="list_jobs_rank_txt">List Jobs Rank</string>
+    <string name="menu_fragment_label">Menu</string>
+    <string name="job_txt">Job</string>
+    <string name="title_txt">Title</string>
+    <string name="company_txt">Company</string>
+    <string name="location_txt">Location</string>
+    <string name="living_index_txt">Cost of Living Index</string>
+    <string name="compensation_package_txt">Compensation Package</string>
+    <string name="package_txt">Package</string>
+    <string name="yearly_salary_txt">Yearly Salary</string>
+    <string name="yearly_bonus_txt">Yearly Bonus</string>
+    <string name="retirement_benefits_txt">Retirement Benefits</string>
+    <string name="relocation_stipend_txt">Relocation Stipend</string>
+    <string name="rsua_txt">Restricted Stock Unit Award</string>
+    <string name="save_job_txt">Save Job</string>
+    <string name="compare_job_txt">Compare Jobs</string>
+    <string name="add_job_txt">Add Job</string>
+    <string name="current_job_txt">Current Job</string>
+    <string name="yes_txt">Yes</string>
+    <string name="no_txt">No</string>
+    <string name="add_update_weight_txt">Add/Update Weight</string>
+    <string name="yearly_salary_weight_txt">Yearly Salary Weight</string>
+    <string name="yearly_bonus_weight_txt">Yearly Bonus Weight</string>
+    <string name="retirement_benefits_weight_txt">Retirement Benefits Weight</string>
+    <string name="relocation_stipend_weight_txt">Relocation Stipend Weight</string>
+    <string name="rsua_weight_txt">Restricted Stock Unit Award Weight</string>
+</resources>

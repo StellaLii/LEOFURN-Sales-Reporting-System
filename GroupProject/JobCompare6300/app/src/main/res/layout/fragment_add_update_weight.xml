@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/tv_salary_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="YSW"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/et_yearly_salary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/et_yearly_salary" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/et_yearly_salary"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="70dp"
+        android:background="@drawable/round_edittext"
+        android:gravity="center_horizontal"
+        android:hint="@string/yearly_salary_weight_txt"
+        android:layout_marginTop="100dp"
+        android:inputType="number"
+        android:padding="12dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_bonus_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="YBW"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/et_yearly_bonus"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/et_yearly_bonus" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/et_yearly_bonus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/round_edittext"
+        android:gravity="center_horizontal"
+        android:hint="@string/yearly_bonus_weight_txt"
+        android:inputType="number"
+        android:padding="12dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_yearly_salary" />
+
+    <TextView
+        android:id="@+id/tv_benefits_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="RBW"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/et_benefits"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/et_benefits" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/et_benefits"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/round_edittext"
+        android:gravity="center_horizontal"
+        android:hint="@string/retirement_benefits_weight_txt"
+        android:inputType="text"
+        android:padding="12dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_yearly_bonus" />
+
+    <TextView
+        android:id="@+id/tv_stipend_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="RSW"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/et_stipend"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/et_stipend" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/et_stipend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/round_edittext"
+        android:gravity="center_horizontal"
+        android:hint="@string/relocation_stipend_weight_txt"
+        android:inputType="number"
+        android:padding="12dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_benefits" />
+
+    <TextView
+        android:id="@+id/tv_rsua_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="RSUW"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/et_rsua"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/et_rsua" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/et_rsua"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/round_edittext"
+        android:gravity="center_horizontal"
+        android:hint="@string/rsua_weight_txt"
+        android:inputType="number"
+        android:padding="12dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_stipend" />
+
+    <Button
+        android:id="@+id/button_add_update_weight"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/save_job_txt"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_rsua" />
+
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

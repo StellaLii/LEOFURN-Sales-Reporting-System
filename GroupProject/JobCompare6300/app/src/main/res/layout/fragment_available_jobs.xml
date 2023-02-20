@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tv_selection_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Selected"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+   <TextView
+        android:id="@+id/tv_job_title_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Job Title"
+        android:textColor="@color/black"
+       android:layout_marginStart="12dp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/tv_selection_label"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_selection_label" />
+
+    <TextView
+        android:id="@+id/tv_job_score_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Job Score"
+        android:textColor="@color/black"
+        android:layout_marginStart="50dp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/tv_job_title_label"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_job_title_label" />
+
+    <TextView
+        android:id="@+id/tv_current_job_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Is Current"
+        android:textColor="@color/black"
+       android:layout_marginStart="12dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_selection_label" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_jobs"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="16dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/button_compare_jobs"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_selection_label" />
+
+    <Button
+        android:id="@+id/button_compare_jobs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="@string/compare_job_txt"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
