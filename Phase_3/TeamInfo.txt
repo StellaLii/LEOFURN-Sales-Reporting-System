@@ -1,0 +1,338 @@
+### This file includes the complete SQL Query for the project.
+### Most query are exact same as what we have in our application file (app.py), except for report7.
+### In report 7, the childcare_limit is dynanmically determined by query and data in database. The example query here is based on current ### provided demo data.
+
+### Query for View General Statistics ###
+###################################################
+
+SELECT COUNT(DISTINCT ad_campaign_description)
+FROM AdCampaign;
+
+SELECT COUNT(PID)
+FROM Product;
+
+SELECT COUNT(store_ID)
+FROM Store;
+
+SELECT COUNT(store_ID)
+FROM Store
+WHERE childcare_limit>0;
+
+SELECT COUNT(store_ID)
+FROM Store
+WHERE restaurant='1' or snackbar = '1';
+
+### Query for View & Add Holiday ###
+###################################################
+
+SELECT day, holiday FROM holiday;
+
+INSERT holiday (day, holiday)
+VALUES ('{d}','{h}');
+
+SELECT day, holiday FROM holiday;
+
+### Query for View & Edit Population ###
+###################################################
+
+SELECT city_name, state, population, city_size FROM Population;
+
+UPDATE Population
+SET population = {population},
+city_size = CASE WHEN population<3700000 THEN 'Small'
+WHEN population<6700000 THEN 'Medium'
+WHEN population <9000000 THEN 'Large'
+ELSE 'Extra Large' END
+WHERE city_name = '{cityname}' and state = '{state}';
+
+SELECT city_name, state,population, city_size FROM Population;
+
+### Query for Report1 ###
+###################################################
+
+SELECT Category.Category_name, SUM(Product.PID), MIN(Product.regular_price), ROUND(AVG(Product.regular_price),2), MAX(Product.regular_price)
+FROM Category
+LEFT JOIN Product_Category ON Category.Category_name = Product_Category.Category_name
+LEFT JOIN Product ON Product_Category.PID = Product.PID
+GROUP BY Category_name
+ORDER BY Category_name ASC;
+
+### Query for Report2 ###
+###################################################
+ WITH regular_sold AS
+            (SELECT PID, product_name, regular_price, SUM(quantity_sold) AS totalunitatregularprice, SUM(quantity_sold*regular_price) AS reg_rev
+            FROM
+            (
+            SELECT saleID, quantity_sold, day, sales.PID AS PID, product_name, regular_price, category_name
+            FROM Sales, Product, product_category
+            WHERE Sales.PID = Product.PID
+            AND product_category.PID = sales.PID
+            AND (Sales.PID, Sales.day) not in (SELECT PID, day FROM DiscountPrice)
+            AND category_name = "Couches and Sofas"
+            ) AS A
+            GROUP BY PID
+            ),
+            discount_sold AS
+            (SELECT PID, product_name, discount_price, SUM(quantity_sold) AS totalunitatdisrprice, SUM(quantity_sold*discount_price) AS dis_rev
+            FROM
+            (
+            SELECT saleID, quantity_sold, sales.day AS day, sales.PID AS PID, product_name, discount_price, category_name
+            FROM sales, product, discountprice, product_category
+            WHERE Sales.PID = Product.PID
+            AND product_category.PID = sales.PID
+            AND Product.PID = DiscountPrice.PID
+            AND sales.day = DiscountPrice.day
+            AND sales.PID = DiscountPrice.PID
+            AND category_name = "Couches and Sofas"
+            ) AS B
+            GROUP BY PID
+            ),
+            predicted_regular AS
+            (
+            SELECT PID, SUM(quantity_sold*regular_price) AS pre_rev1
+            FROM
+            (
+            SELECT saleID, quantity_sold, day, sales.PID AS PID, product_name, regular_price, category_name
+            FROM Sales, Product, product_category
+            WHERE Sales.PID = Product.PID
+            AND product_category.PID = sales.PID
+            AND (Sales.PID, Sales.day) not in (SELECT PID, day FROM DiscountPrice)
+            AND category_name = "Couches and Sofas"
+            ) AS C
+            GROUP BY PID
+            ),
+            predicted_discount AS
+            (
+            SELECT PID, SUM(quantity_sold*regular_price*0.75) AS pre_rev2
+            FROM
+            (
+            SELECT saleID, quantity_sold, sales.day AS day, sales.PID AS PID, product_name, discount_price, category_name, regular_price
+            FROM sales, product, discountprice, product_category
+            WHERE Sales.PID = Product.PID
+            AND product_category.PID = sales.PID
+            AND Product.PID = DiscountPrice.PID
+            AND sales.day = DiscountPrice.day
+            AND sales.PID = DiscountPrice.PID
+            AND category_name = "Couches and Sofas"
+            ) AS D
+            GROUP BY PID
+            )
+            SELECT regular_sold.PID, regular_sold.product_name, regular_price, (totalunitatregularprice + totalunitatdisrprice) AS totalunit, totalunitatregularprice, totalunitatdisrprice, round((reg_rev + dis_rev)) AS actualrev, round(pre_rev1+pre_rev2), round((reg_rev + dis_rev - pre_rev1 - pre_rev2)) AS diff
+            FROM regular_sold, discount_sold, predicted_regular, predicted_discount
+            WHERE regular_sold.PID = discount_sold.PID
+            AND regular_sold.PID = predicted_regular.PID
+            AND regular_sold.PID = predicted_discount.PID
+            AND abs(reg_rev + dis_rev - pre_rev1 - pre_rev2) >= 5000
+            GROUP BY regular_sold.PID
+ORDER BY (reg_rev + dis_rev - pre_rev1 - pre_rev2) DESC;
+
+### Query for Report3 ###
+###################################################
+
+SELECT DISTINCT Store.state
+FROM Sales
+INNER JOIN Store ON Store.store_ID = Sales.store_ID;
+
+WITH reg_sales AS (
+    SELECT Store.store_ID, ROUND(SUM(quantity_sold *regular_price),2) AS reg_revenue,YEAR(sales.day) AS Year
+    FROM Sales, Product,Store
+    WHERE Sales.PID = Product.PID
+    AND Sales.store_ID = Store.store_ID
+    AND (Sales.PID, Sales.day) not in (SELECT PID, day FROM DiscountPrice)
+    AND Store.state = '{state_selected}'
+    GROUP BY YEAR(sales.day),store_ID),
+    dis_sales AS (
+    SELECT Store.store_ID, ROUND(SUM(quantity_sold *discount_price),2) AS dis_revenue,YEAR(sales.day) AS Year
+    FROM Sales, Product,Store, DiscountPrice
+    WHERE Sales.PID = Product.PID
+    AND Sales.store_ID = Store.store_ID
+    AND Product.PID = DiscountPrice.PID
+    AND Sales.day = DiscountPrice.day
+    AND Store.state = '{state_selected}'
+    GROUP BY YEAR(sales.day),store_ID),
+    store_list AS(
+    SELECT *
+    FROM store
+    WHERE state = '{state_selected}')
+
+    SELECT reg_sales.Year, store_list.store_ID, store_list.street_address, store_list.city_name,store_list.state,ROUND((IFNULL(reg_revenue,2)+IFNULL(dis_revenue,0)),2) AS Revenue
+    FROM store_list
+    LEFT JOIN reg_sales ON store_list.store_ID  = reg_sales.store_ID
+    LEFT JOIN dis_sales ON reg_sales.store_ID = dis_sales.store_ID AND reg_sales.Year = dis_sales.Year
+    ORDER BY Year ASC, Revenue DESC;
+
+### Query for Report4 ###
+###################################################
+
+SELECT groudhogday_furniture_sold, total_sold, ROUND(avg_sold,2), S.yr
+FROM (
+SELECT SUM(quantity_sold) AS groudhogday_furniture_sold, Year(day) AS yr
+FROM sales
+INNER JOIN product_category ON product_category.PID = sales.PID
+WHERE product_category.category_name = "outdoor furniture"
+AND Month(day) = 2 AND Day(day) = 2
+GROUP BY Year(day)
+) AS S
+INNER JOIN (
+SELECT Year(day) AS yr, SUM(quantity_sold) AS total_sold, (SUM(quantity_sold)/365) AS avg_sold
+FROM (
+SELECT saleID, quantity_sold, day, sales.PID AS PID, category_name
+FROM sales
+INNER JOIN product_category ON product_category.PID = sales.PID
+WHERE Product_Category.category_name = "outdoor furniture"
+) AS T
+GROUP BY Year(day)
+) AS T
+ON S.yr = T.yr
+ORDER BY S.yr ASC;
+
+
+### Query for Report5 ###
+###################################################
+
+SELECT DISTINCT YEAR(Sales.day) AS Year,MONTH(Sales.day) AS Month FROM Sales;
+
+WITH cat_state_sales AS (
+    SELECT Year(Sales.day) as Year, Month(Sales.day) as Month, Category_name, Store.state, SUM(quantity_sold) as total_sold
+    FROM sales
+    JOIN product_category ON sales.PID = product_category.PID
+    JOIN store ON sales.store_ID = store.store_ID
+    WHERE Year(Sales.day)={year_selected} AND Month(Sales.day) = {month_selected}
+    GROUP BY 3,4)
+
+    SELECT *
+    FROM cat_state_sales
+    WHERE (category_name, total_sold) in (SELECT Category_name, MAX(total_sold) FROM cat_state_sales GROUP BY 1)
+    ORDER BY category_name;
+
+### Query for Report6 ###
+###################################################
+WITH reg_sales AS (
+        SELECT Year, city_size, sum(total_sales) AS regular_revenue
+        FROM (
+        SELECT YEAR(sales.day) AS Year, Population.city_size, quantity_sold*regular_price AS total_sales
+        FROM sales
+        JOIN Product ON Sales.PID = Product.PID
+        JOIN Store ON Sales.store_ID = Store.store_ID
+        JOIN Population ON Population.city_name = Store.city_name AND Store.state = Population.state
+        WHERE (Sales.PID, Sales.day) NOT IN (SELECT PID, day FROM DiscountPrice)
+        )t
+        GROUP BY 1,2),
+    dis_sales AS (
+        SELECT YEAR(sales.day) AS Year, Population.city_size,SUM(quantity_sold*discount_price) AS discount_revenue
+        FROM sales
+        JOIN Product ON Sales.PID = Product.PID
+        JOIN Store ON Sales.store_ID = Store.store_ID
+        JOIN Population ON Population.city_name = Store.city_name AND Store.state = Population.state
+        JOIN discountprice ON Sales.PID =DiscountPrice.PID AND Sales.day = DiscountPrice.day
+        GROUP BY 1,2)
+
+    SELECT Year, ROUND(SUM(CASE WHEN city_size = 'Small' THEN total_rev ELSE 0 END),2) AS Small,
+                 ROUND(SUM(CASE WHEN city_size = 'Medium' THEN total_rev ELSE 0 END),2) AS Medium,
+                 ROUND(SUM(CASE WHEN city_size = 'Large' THEN total_rev ELSE 0 END),2) AS Large,
+                 ROUND(SUM(CASE WHEN city_size = 'Extra Large' THEN total_rev ELSE 0 END),2) AS 'Extra Large'
+    FROM (
+        SELECT reg_sales.year, reg_sales.city_size, regular_revenue+discount_revenue AS total_rev
+        FROM reg_sales
+        LEFT OUTER JOIN dis_sales ON reg_sales.year = dis_sales.year AND reg_sales.city_size = dis_sales.city_size
+        UNION
+        SELECT dis_sales.year, dis_sales.city_size, regular_revenue+discount_revenue AS total_rev
+        FROM reg_sales
+        RIGHT OUTER JOIN dis_sales ON reg_sales.year = dis_sales.year AND reg_sales.city_size = dis_sales.city_size
+        ) tmp
+    GROUP BY 1
+    ORDER BY 1;
+
+### Query for Report7 ###
+###################################################
+SELECT @MAX_DATE := MAX(day) FROM day;
+WITH base AS(
+      SELECT DISTINCT
+      DATE_FORMAT(day,'%Y-%m') as YM
+      FROM day
+      WHERE DATEDIFF(@MAX_DATE,day)<=365
+    ),
+    sale_data AS(
+    SELECT b.YM, childcare_limit, ROUND(SUM(total_sold),2) as total_sales
+    FROM base b
+    LEFT JOIN (
+    SELECT DATE_FORMAT(Sales.day,'%Y-%m') as YM, Store.childcare_limit, SUM(Sales.quantity_sold*Product.regular_price) AS total_sold
+    FROM Sales, Product, Store
+    WHERE Sales.PID = Product.PID
+        AND Sales.store_ID = Store.store_ID
+        AND (Sales.PID, Sales.day) not in (SELECT PID, day FROM DiscountPrice)
+        AND DATEDIFF(@MAX_DATE,Sales.day)<=365
+    GROUP BY 1,2
+    UNION ALL
+    SELECT DATE_FORMAT(Sales.day,'%Y-%m') as YM, Store.childcare_limit, SUM(Sales.quantity_sold* discountprice.discount_price) AS total_sold
+    FROM Sales, Product, Store, DiscountPrice
+    WHERE Sales.PID = Product.PID
+        AND Sales.store_ID = Store.store_ID
+        AND Product.PID = DiscountPrice.PID
+        AND Sales.day = DiscountPrice.day
+        AND DATEDIFF(@MAX_DATE,Sales.day)<=365
+    GROUP BY 1,2) t ON b.YM = t.YM
+    GROUP BY 1,2
+    ORDER BY 1,2);
+
+SELECT YM, SUM(CASE WHEN childcare_limit = 0 THEN total_sales ELSE 0 END) AS "No_childcare",SUM(CASE WHEN childcare_limit = 30 THEN total_sales ELSE 0 END) AS "Childcare_30_min",SUM(CASE WHEN childcare_limit = 45 THEN total_sales ELSE 0 END) AS "Childcare_45_min",SUM(CASE WHEN childcare_limit = 60 THEN total_sales ELSE 0 END) AS "Childcare_60_min"
+
+FROM sale_data
+GROUP BY 1
+ORDER BY 1;
+
+### Query for Report8 ###
+###################################################
+
+WITH store_sale_cat AS(
+    SELECT Store.store_ID, Product_Category.category_name as category_name,
+    SUM(Sales.quantity_sold) as total_sold
+    FROM Store
+    INNER JOIN Sales ON Store.store_ID = Sales.store_ID
+    INNER JOIN Product ON Sales.PID = Product.PID
+    INNER JOIN Product_Category ON Product.PID = Product_Category.PID
+    GROUP BY Store.store_ID, Product_Category.category_name)
+
+    SELECT category_name, 'Restaurant' as st ,SUM(total_sold) as total_sold
+    FROM store_sale_cat
+    WHERE store_ID IN (SELECT store_id FROM Store WHERE restaurant = '1')
+    GROUP BY 1
+    UNION
+    SELECT category_name, 'Non-Restaurant' as st ,SUM(total_sold) as total_sold
+    FROM store_sale_cat
+    WHERE store_ID NOT IN (SELECT store_id FROM Store WHERE restaurant = '1')
+    GROUP BY 1
+    ORDER BY 1,2;
+
+ ### Query for Report9 ###
+###################################################
+
+WITH camp_sale AS
+    (SELECT Sales.PID, SUM(quantity_sold) AS sold_dur_camp
+     FROM Sales
+     JOIN discountprice ON Sales.day = discountprice.day AND sales.PID = discountprice.PID
+     WHERE sales.day IN (SELECT DISTINCT day FROM adcampaign)
+     GROUP BY 1),
+     non_camp_sale AS
+    (SELECT Sales.PID, SUM(quantity_sold) AS sold_out_camp
+     FROM Sales
+     JOIN discountprice ON Sales.day = discountprice.day AND sales.PID = discountprice.PID
+     WHERE sales.day NOT IN (SELECT DISTINCT day FROM adcampaign)
+     GROUP BY 1),
+     diff_t AS (
+     SELECT product.PID, product_name, IFNULL(sold_dur_camp,0) AS sold_during_campaign ,IFNULL(sold_out_camp,0) AS sold_outside_campaign,(IFNULL(sold_dur_camp,0)- IFNULL(sold_out_camp,0)) AS diff
+     FROM product
+     LEFT JOIN camp_sale ON product.PID = camp_sale.PID
+     LEFT JOIN non_camp_sale ON product.PID = non_camp_sale.PID
+     )
+
+    SELECT *
+    FROM (
+    (SELECT *
+    FROM diff_t
+    ORDER BY diff DESC LIMIT 10)
+    UNION
+    (SELECT *
+    FROM diff_t
+    ORDER BY diff LIMIT 10)) t
+    ORDER BY diff DESC;

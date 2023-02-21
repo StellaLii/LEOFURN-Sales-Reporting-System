@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}View Store Revenue by Year by State{% endblock %}
+
+{% block content %}
+
+<h2 style="text-align: center;">Store Revenue by Year</h2>
+
+<form action="" method="POST">
+  <label for="S_Y" style="color: #043078; font-size:24px;">Choose a State to view:</label>
+  <p style="text-align: left;"> 
+    <select id="state_selected" name="state_selected" value="state_selected" class="selectpicker form-control" required>
+        {% for state_selected in statelist %}
+        <option value="{{ state_selected }}" >{{ state_selected }}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" value="submit" style="color: #043078;"/>
+  </form>
+
+    <br> </br>
+    
+    <div id ="revenue_table">
+    <table style="border-collapse: collapse; width: 80%; margin-left: auto;
+  margin-right: auto;" border="1">
+        <tbody>
+        <tr>
+          <th style="width: 10%;">Year</th>
+          <th style="width: 10%;">store_ID</th>
+          <th style="width: 30%;">street_address</th>
+          <th style="width: 10%;">city_name</th>
+          <th style="width: 10%;">state</th>
+          <th style="width: 16%;">Revenue</th>
+          
+        </tr>
+          {% for Year, Store_ID, street_address, city_name, state,Revenue in revenue_list %}
+        <tr>
+          <td style="text-align:center">{{ Year }}</td>
+          <td style="text-align:center">{{ Store_ID }}</td>
+          <td style="text-align:center">{{ street_address }}</td>
+          <td style="text-align:center">{{ city_name }}</td>
+          <td style="text-align:center">{{ state }}</td>
+          <td style="text-align:center">{{ Revenue }}</td>
+          
+        </tr>
+        {% endfor %}
+	
+	  </tbody>
+     </table>
+     </div>
+    <br> </br>
+    <br> </br>
+  {% endblock %}
+

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}View Actual versus Predicted Revenue for Couches and Sofas{% endblock %}
+
+{% block content %}
+    
+    <h2 style="text-align: center;">Actual versus Predicted Revenue for Couches and Sofas</h2>
+    <div id ="act_table">
+    <table style="border-collapse: collapse; width: 60%; margin-left: auto;
+  margin-right: auto;" border="1">
+        <tbody>
+        <tr>
+        <th style="width: 10%;">PID</th>
+		<th style="width: 12%;">Product Name</th>
+        <th style="width: 12%;">Retail Price</th>
+        <th style="width: 12%;">The Total Number of Units Ever Sold</th>
+		<th style="width: 12%;">The Total Number of Units Sold at Retail Price</th>
+        <th style="width: 12%;">The Total Number of Units Sold at a Discount</th>
+        <th style="width: 12%;">Actual Revenue</th>
+        <th style="width: 12%;">Predicted Revenue</th>
+        <th style="width: 12%;">The difference between the actual revenue and the predicted revenue</th>
+	</tr>
+	{% for PID, product_name, retail_price, totalunit, totalunitinretail, totalunitindiscount,act_rev, pre_rev, diff in act_list %} 
+		<tr>
+        	<td style="text-align:center">{{ PID }}</td>
+        	<td style="text-align:center">{{ product_name }}</td>
+        	<td style="text-align:center">{{ retail_price }}</td>
+			<td style="text-align:center">{{ totalunit }}</td>
+        	<td style="text-align:center">{{ totalunitinretail }}</td>
+        	<td style="text-align:center">{{ totalunitindiscount }}</td>
+			<td style="text-align:center">{{ act_rev }}</td>
+        	<td style="text-align:center">{{ pre_rev }}</td>
+			<td style="text-align:center">{{ diff }}</td>
+    		</tr>
+	{% endfor %}
+	</tbody>
+     </table>
+     </div>
+    <br></br>
+
+{% endblock %}
